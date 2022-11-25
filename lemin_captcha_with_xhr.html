@@ -1,0 +1,55 @@
+<html>
+   <head>
+      <title>Lemin Captcha Example</title>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+   </head>
+   <body>
+      <script>
+         <!-- https://help.leminnow.com/knowledge/what-about-the-lemin-api -->
+              $(document).ready(function() {
+                $("form").submit(function(event) {
+         	leminCaptcha = window.leminCroppedCaptcha.getCaptcha();
+                  var data = {
+                    email: $("#email").val()
+                  };
+         	  let formData = {
+         		...data,
+         		...leminCaptcha.getCaptchaValue()
+         		};
+                  $.ajax({
+                    type: "POST",
+                    url: "lemin_captcha_verify.php",
+                    data: formData,
+                    dataType: "json",
+                    encode: true,
+                  }).done(function(data) {
+                    if (data.success){
+						alert('success!');
+						leminCaptcha.reloadPuzzle();
+					}
+					else{
+						alert('CAPTCHA error!');
+					}
+                  });
+                  event.preventDefault();
+                });
+              });
+            
+      </script>
+      <form action="">
+         <div style="margin-bottom:15px;">
+            <label for="email">Email</label>
+            <br>
+            <input type="text" id="email" name="email" value="">
+         </div>
+         <!-- https://help.leminnow.com/knowledge/how-to-implement-on-vanillajs -->
+         <div style="margin-bottom:15px;width:300px;">
+            <div id="lemin-cropped-captcha"></div>
+         </div>
+         <script src="https://api.leminnow.com/captcha/v1/cropped/[REPLACE HERE WIITH YOUR CAPTCHA ID]/js"></script>
+         <div style="margin-bottom:15px;">
+            <input type="submit" value="Submit">
+         </div>
+      </form>
+   </body>
+</html>
